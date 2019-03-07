@@ -1,6 +1,6 @@
 from app.orm import ORM
 from app.util import get_price
-
+from flask import jsonify
 
 class Position(ORM):
 
@@ -15,7 +15,11 @@ class Position(ORM):
         self.ticker = kwargs.get('ticker')
         self.shares = kwargs.get('shares')
 
+
     def current_value(self):
         """ current value of this postion at the current market rate. returns
         a float """
         return 0.0
+    
+    def get_shares(self):
+        return jsonify(shares=self.shares)

@@ -18,7 +18,6 @@ class Account(ORM):
         self.password_hash = kwargs.get('password_hash')
         self.api_key = kwargs.get('api_key')
         self.balance = kwargs.get('balance')
-        self.api_key = kwargs.get('api_key')
 
     @classmethod
     def login(cls, username, password):
