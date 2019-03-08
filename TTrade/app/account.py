@@ -38,12 +38,41 @@ class Account(ORM):
         self.api_key = key
         return api_key
 
-    def get_positions(self):
-        view = View()
-        positions = Position.select_many_where("WHERE accounts_pk = ? AND shares", (self.pk, ))
-        for position in positions:
-            view.positions(self, position)
-            
+    def get_positions_json(self):
+        positions = {}
+
+        get_position = Position.select_many_where("WHERE accounts_pk = ? AND shares = ?", (self.pk, ))
+        for position in get_position:
+            positions[position.ticker] = {'ticker': position.ticker, 'shares':position.shares}
+        return positions
+
+    # def get_position_ticker(self):
+    #     positions = {}
+    #     ticker = Position.select_one_where('WHERE accounts_pk = ? AND ticker = ?', (self.pk, ))
+    #     for position in ticker:
+    #         positions[position.ticker] = {'ticker': position.ticker, 'shares': position.shares}
+    #     return positions
+    
+    def get_position_for_json(self, ticker):
+        positions = {}
+        get_position = Position.select_many_where(
+            "WHERE ticker = ? AND accounts_pk = ?", (ticker, self.pk))
+        for position in get_position:
+            positions[position.ticker] = {'ticker': position.ticker, 'shares': position.shares}
+        return positions    
+    
+    def get_trades_json(self):
+        trades = {}
+        get_trades = Trade.select_many_where("WHERE accounts_pk = ?", ( self.pk, ))
+        for trade in get_trades:
+            trades[trade.ticker] = {'ticker': trade.ticker, 'volume': trade.volume, 'price': trade.price, 'time': trade.time}
+        return trades
+
+    # def get_positions(self):
+    #     view = View()
+    #     positions = Position.select_many_where("WHERE accounts_pk = ? AND shares", (self.pk, ))
+    #     for position in positions:
+    #         view.positions(self, position)
 
     def get_position_for(self, ticker):
         """ return a specific Position object for the user. if the position does not

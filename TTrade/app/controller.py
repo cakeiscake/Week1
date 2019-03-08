@@ -1,6 +1,6 @@
 from app.account import Account
 from app.view import View 
-from app.util import get_price 
+from app.util import get_price2
 import time 
 
 view = View()
@@ -71,7 +71,7 @@ def logged_in_homepage(account):
                 continue
         elif selection == "3":
             ticker_request = view.request_ticker_symbol()
-            ticker_response = get_price(ticker_request)
+            ticker_response = get_price2(ticker_request)
             if type(ticker_response) == list:
                 view.return_ticker_symbol_price(ticker_response)
                 time.sleep(3)
@@ -80,7 +80,7 @@ def logged_in_homepage(account):
                 time.sleep(3)
         elif selection == "4":
             ticker = view.request_ticker_symbol()
-            ticker_price = get_price(ticker)
+            ticker_price = get_price2(ticker)
             if ticker_price == False:
                 view.improper_ticker()
                 time.sleep(3)
@@ -104,7 +104,7 @@ def logged_in_homepage(account):
             Account.get_positions(account)
             time.sleep(3)
             ticker_to_sell = view.sell_shares()
-            has_stock = get_price(ticker_to_sell)
+            has_stock = get_price2(ticker_to_sell)
             position = account.get_position_for(ticker_to_sell)
             amount = view.sell_shares_amount()
 
@@ -133,7 +133,7 @@ def logged_in_homepage(account):
                 ticker_symbol = view.request_ticker_symbol()
                 account_trades_by_ticker = Account.trades_for(account, ticker_symbol)
                
-                if get_price(ticker_symbol) == False:
+                if get_price2(ticker_symbol) == False:
                     view.improper_ticker()
                     time.sleep(3)
                 elif not account_trades_by_ticker:
