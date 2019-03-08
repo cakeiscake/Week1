@@ -51,17 +51,17 @@ def all_trades(api_key):
     return jsonify({'trades': trades})
 
 
-@app.route('/api/<api_key>/buy/<ticker>/<int:amount>', methods=['POST'])
-def buy(api_key, ticker, amount):
-    account = Account.authenticate_api(api_key)
-    if not account:
-        return jsonify({'error': 'authentication error'}), 401
-    if not request.json:
-        return jsonify({'error': 'bad request'})
-    ticker = get_price(ticker)
-    price = ticker[1]
-    total_cost = int(amount) *int(price)
-    trade = Account.buy(account, ticker, amount, price, total_cost)
+# @app.route('/api/<api_key>/buy/<ticker>/<int:amount>', methods=['POST'])
+# def buy(api_key, ticker, amount):
+#     account = Account.authenticate_api(api_key)
+#     if not account:
+#         return jsonify({'error': 'authentication error'}), 401
+#     if not request.json:
+#         return jsonify({'error': 'bad request'})
+#     ticker = get_price(ticker)
+#     price = ticker[1]
+#     total_cost = int(amount) *int(price)
+#     trade = Account.buy(account, ticker, amount, price, total_cost)
 
 
 # @app.route('api/<api_key>/sell', methods=['POST'])
