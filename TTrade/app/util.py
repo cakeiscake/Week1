@@ -34,7 +34,6 @@ def get_price2(ticker):
 def get_price(ticker):
     # if ticker in FAKE_PRICES.keys():
     #     return FAKE_PRICES[ticker]
-    
     try: 
         response = requests.get('https://api.iextrading.com/1.0/stock/{}/price'.format(ticker))
         data = response.json()

@@ -40,11 +40,10 @@ class Account(ORM):
 
     def get_positions_json(self):
         positions = {}
-
-        get_position = Position.select_many_where("WHERE accounts_pk = ? AND shares = ?", (self.pk, ))
+        get_position = Position.select_many_where   ("WHERE ticker = ? AND accounts_pk = ?", (self.pk, ))
         for position in get_position:
-            positions[position.ticker] = {'ticker': position.ticker, 'shares':position.shares}
-        return positions
+            positions[position.ticker] = {'shares': position.shares}
+        return positions  
 
     # def get_position_ticker(self):
     #     positions = {}
@@ -53,27 +52,6 @@ class Account(ORM):
     #         positions[position.ticker] = {'ticker': position.ticker, 'shares': position.shares}
     #     return positions
     
-    def get_position_for_json(self, ticker):
-        positions = {}
-        get_position = Position.select_many_where(
-            "WHERE ticker = ? AND accounts_pk = ?", (ticker, self.pk))
-        for position in get_position:
-            positions[position.ticker] = {'ticker': position.ticker, 'shares': position.shares}
-        return positions    
-    
-    def get_trades_json(self):
-        trades = {}
-        get_trades = Trade.select_many_where("WHERE accounts_pk = ?", ( self.pk, ))
-        for trade in get_trades:
-            trades[trade.ticker] = {'ticker': trade.ticker, 'volume': trade.volume, 'price': trade.price, 'time': trade.time}
-        return trades
-
-    # def get_positions(self):
-    #     view = View()
-    #     positions = Position.select_many_where("WHERE accounts_pk = ? AND shares", (self.pk, ))
-    #     for position in positions:
-    #         view.positions(self, position)
-
     def get_position_for(self, ticker):
         """ return a specific Position object for the user. if the position does not
         exist, return a new Position with zero shares. Returns a Position object """
@@ -82,6 +60,45 @@ class Account(ORM):
         if position is None:
             return Position(ticker=ticker, accounts_pk=self.pk, shares=0)
         return position
+
+    def get_position_for_json(self, ticker):
+        #DO NOT TOUCH
+        positions = {}
+        get_position = Position.select_many_where(
+            "WHERE ticker = ? AND accounts_pk = ?", (ticker, self.pk))
+        for position in get_position:
+            positions[position.ticker] = {'shares': position.shares}
+        return positions    
+    
+    def get_trades_json(self, ticker):
+        trades = {}
+        get_trades = Trade.select_many_where("WHERE accounts_pk = ?", (self.pk, ))
+        for trade in get_trades:
+            trades[trade.ticker] = {'ticker': trade.ticker, 'volume': trade.volume, 'price': trade.price, 'time': trade.time}
+        return trades
+   
+    def get_all_trades(self):
+        trades = {}
+        get_trades = Trade.select_many_where("WHERE accounts_pk = ?", (self.pk, ))
+        for trade in get_trades:
+            trades[trade.ticker] = {'ticker': trade.ticker, 'volume': trade.volume, 'price': trade.price, 'time': trade.time}
+        return trades
+
+    # def get_posz(self, ticker):
+    #     """ return a specific Position object for the user. if the position does not
+    #     exist, return a new Position with zero shares. Returns a Position object """
+    #     trades = {}
+    #     positions = Trade.select_many_where(
+    #         "WHERE ticker = ? AND accounts_pk = ?", (self.pk ,ticker))
+    #     for position in positions:
+    #         trades[positions.ticker] = {'shares': positions.ticker}
+    #     return trades
+    # def get_positions(self):
+    #     view = View()
+    #     positions = Position.select_many_where("WHERE accounts_pk = ? AND shares", (self.pk, ))
+    #     for position in positions:
+    #         view.positions(self, position)
+
 
     def get_trades(self):
         """ return all of the user's trades ordered by time. returns a list of
@@ -112,7 +129,7 @@ class Account(ORM):
         modify a Position, and alter the self.balance. returns nothing."""
         position = self.get_position_for(ticker)
         
-        price = get_price(ticker)[1]
+        price = get_price(ticker)
         trade = Trade(accounts_pk = self.pk, ticker=ticker, price=price, volume= -int(amount))
         position.shares -= int(amount)
         self.balance += int(amount) * price
